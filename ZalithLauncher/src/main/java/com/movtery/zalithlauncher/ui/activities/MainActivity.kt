@@ -32,6 +32,9 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.Lifecycle
@@ -52,6 +55,7 @@ import com.movtery.zalithlauncher.path.URL_SUPPORT
 import com.movtery.zalithlauncher.setting.AllSettings
 import com.movtery.zalithlauncher.ui.base.BaseAppCompatActivity
 import com.movtery.zalithlauncher.ui.components.SimpleAlertDialog
+import com.movtery.zalithlauncher.ui.notice.OfflineForkNoticeDialog
 import com.movtery.zalithlauncher.ui.screens.NestedNavKey
 import com.movtery.zalithlauncher.ui.screens.NormalNavKey
 import com.movtery.zalithlauncher.ui.screens.content.elements.Background
@@ -274,6 +278,8 @@ class MainActivity : BaseAppCompatActivity() {
         )
 
         setContent {
+            var neverShow by remember { mutableStateOf(false) }
+
             ZalithLauncherTheme(
                 backgroundViewModel = backgroundViewModel,
                 festivals = festivals
@@ -454,6 +460,22 @@ class MainActivity : BaseAppCompatActivity() {
                     confirmResult = {
                         vulkanCheckerViewModel.resumeCont()
                         AllSettings.autoVulkanChecker.save(false)
+                    }
+                )
+            }
+
+            if (AllSettings.showOfflineForkNotice.state) {
+                OfflineForkNoticeDialog(
+                    neverShow = neverShow,
+                    onNeverShowChanged = { neverShow = it },
+                    onClose = {
+                        if (neverShow) AllSettings.showOfflineForkNotice.save(false)
+                    },
+                    onVisitRepo = {
+                        if (neverShow) AllSettings.showOfflineForkNotice.save(false)
+                        eventViewModel.sendEvent(
+                            EventViewModel.Event.OpenLink("https://github.com/rolexf-panel/ZalithLauncher2-OFFLINE")
+                        )
                     }
                 )
             }

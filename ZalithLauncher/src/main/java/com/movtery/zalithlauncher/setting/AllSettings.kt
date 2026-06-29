@@ -623,6 +623,11 @@ object AllSettings : SettingsRegistry() {
     val showSponsorship = boolSetting("showSponsorship", true)
 
     /**
+     * 是否显示离线分支通知弹窗 (ZalithLauncher2-OFFLINE fork notice)
+     */
+    val showOfflineForkNotice = boolSetting("showOfflineForkNotice", true)
+
+    /**
      * 搜索模组的初始搜索平台
      */
     val searchModPlatform = enumSetting("searchModPlatform", Platform.MODRINTH)
